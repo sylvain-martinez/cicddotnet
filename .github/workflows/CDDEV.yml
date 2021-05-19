@@ -1,0 +1,36 @@
+name: Deploy to dev environment
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+
+      - uses: actions/checkout@master
+
+      - uses: actions/setup-dotnet@v1
+        name: Set dotnet version
+        with:
+          dotnet-version: '5.0.x'
+
+      - run: dotnet restore
+        name: Restore nuget packages
+
+      - run: dotnet build --configuration Release
+        name: build
+
+      - run: dotnet publish -c Release -o ./demobc'
+        name: publish
+
+      - name: 'Deploy to dev environment'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: demobc
+          publish-profile: ${{ secrets.PUBLISH_PROFIL  }}
+          package: './demobc'
