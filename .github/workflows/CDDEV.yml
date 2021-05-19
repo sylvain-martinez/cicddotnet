@@ -25,7 +25,7 @@ jobs:
       - run: dotnet build --configuration Release
         name: build
 
-      - run: dotnet publish -c Release -o ./demobc'
+      - run: dotnet publish -c Release -o ./demobc
         name: publish
 
       - name: 'Deploy to dev environment'
