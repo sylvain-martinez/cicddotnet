@@ -22,4 +22,4 @@ jobs:
       - run: dotnet build --no-restore
         name: build
 
-      - run: dotnet test --no-build --verbosity nomal
+      - run: dotnet test --no-build
