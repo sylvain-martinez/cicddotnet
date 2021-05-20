@@ -54,7 +54,7 @@ jobs:
       - name: 'Deploy to dev environment'
         uses: azure/webapps-deploy@v2
         with:
-          app-name: demobc-uat
+          app-name: demo-bc-uat
           package: './artifact/sampleapp'
 
   deploy-to-prod:
@@ -79,5 +79,5 @@ jobs:
       - name: 'Deploy to dev environment'
         uses: azure/webapps-deploy@v2
         with:
-          app-name: demobc-prod
+          app-name: demo-bc-prod
           package: './artifact/sampleapp'
