@@ -1,0 +1,83 @@
+name: Deploy to prod environment
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-upload-artefact:
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@master
+
+      - uses: actions/setup-dotnet@v1
+        name: Set dotnet version
+        with:
+          dotnet-version: '5.0.x'
+
+      - run: dotnet restore
+        name: Restore nuget packages
+
+      - run: dotnet build --configuration Release
+        name: build
+
+      - run: dotnet publish -c Release -o ./demobc
+        name: publish
+
+      - uses: actions/upload-artifact@v2
+        name: upload artifact
+        with:
+          name: sampleapp
+          path: ./demobc
+
+  deploy-to-uat:
+    runs-on: ubuntu-latest
+    needs:
+      - build-and-upload-artefact
+    environment: uat
+    steps:
+
+      - name: download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: sampleapp
+          path: ./artifact
+
+      - name: login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.CREDENTIALS }}
+
+      - name: 'Deploy to dev environment'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: demobc-uat
+          package: './artifact/sampleapp'
+
+  deploy-to-prod:
+    runs-on: ubuntu-latest
+    needs:
+      - build-and-upload-artefact
+      - deploy-to-dev
+    environment: prod
+    steps:
+
+      - name: download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: sampleapp
+          path: ./artifact
+
+      - name: login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.CREDENTIALS }}
+
+      - name: 'Deploy to dev environment'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: demobc-prod
+          package: './artifact/sampleapp'
