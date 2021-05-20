@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build-and-upload-artefact
-      - deploy-to-dev
+      - deploy-to-uat
     environment: prod
     steps:
 
